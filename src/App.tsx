@@ -1,6 +1,6 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
+// import { TooltipProvider } from "@/components/ui/tooltip"; // Temporarily removed
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
@@ -16,7 +16,7 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <Toaster />
     <Sonner />
-    <TooltipProvider>
+    {/* <TooltipProvider> */}
       <BrowserRouter>
         <SessionContextProvider>
           <Routes>
@@ -27,7 +27,7 @@ const App = () => (
           </Routes>
         </SessionContextProvider>
       </BrowserRouter>
-    </TooltipProvider>
+    {/* </TooltipProvider> */}
   </QueryClientProvider>
 );
 
