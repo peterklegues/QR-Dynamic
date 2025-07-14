@@ -6,6 +6,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { QrCode, Link, Tag, Zap } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useSession } from "@/integrations/supabase/auth";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface CreateQRDialogProps {
   open: boolean;
@@ -19,11 +22,41 @@ export function CreateQRDialog({ open, onOpenChange }: CreateQRDialogProps) {
     description: ""
   });
   const { toast } = useToast();
+  const { session } = useSession();
+  const queryClient = useQueryClient();
+
+  const createQrCodeMutation = useMutation({
+    mutationFn: async (newQrCode: { name: string; target_url: string; description: string; owner_id: string }) => {
+      const { data, error } = await supabase
+        .from('qr_codes')
+        .insert([newQrCode])
+        .select();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      toast({
+        title: "QR Code criado com sucesso!",
+        description: "Seu novo QR Code dinâmico foi adicionado.",
+      });
+      queryClient.invalidateQueries({ queryKey: ['qr_codes'] }); // Invalida o cache para recarregar a lista
+      queryClient.invalidateQueries({ queryKey: ['qr_stats'] }); // Invalida o cache para recarregar as estatísticas
+      setFormData({ name: "", target_url: "", description: "" });
+      onOpenChange(false);
+    },
+    onError: (error) => {
+      toast({
+        title: "Erro ao criar QR Code",
+        description: error.message || "Ocorreu um erro inesperado.",
+        variant: "destructive"
+      });
+    },
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validação básica
     if (!formData.name || !formData.target_url) {
       toast({
         title: "Erro de validação",
@@ -33,15 +66,21 @@ export function CreateQRDialog({ open, onOpenChange }: CreateQRDialogProps) {
       return;
     }
 
-    // Aqui integrará com Supabase
-    toast({
-      title: "QR Code criado com sucesso!",
-      description: "Funcionalidade será implementada com Supabase",
-    });
+    if (!session?.user?.id) {
+      toast({
+        title: "Erro de autenticação",
+        description: "Você precisa estar logado para criar um QR Code.",
+        variant: "destructive"
+      });
+      return;
+    }
 
-    // Resetar form e fechar dialog
-    setFormData({ name: "", target_url: "", description: "" });
-    onOpenChange(false);
+    createQrCodeMutation.mutate({
+      name: formData.name,
+      target_url: formData.target_url,
+      description: formData.description,
+      owner_id: session.user.id,
+    });
   };
 
   return (
@@ -126,9 +165,14 @@ export function CreateQRDialog({ open, onOpenChange }: CreateQRDialogProps) {
             <Button 
               type="submit" 
               className="bg-gradient-to-r from-primary to-primary-glow shadow-glow"
+              disabled={createQrCodeMutation.isPending}
             >
-              <QrCode className="w-4 h-4 mr-2" />
-              Criar QR Code
+              {createQrCodeMutation.isPending ? "Criando..." : (
+                <>
+                  <QrCode className="w-4 h-4 mr-2" />
+                  Criar QR Code
+                </>
+              )}
             </Button>
           </div>
         </form>
