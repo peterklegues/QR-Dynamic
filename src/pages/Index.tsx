@@ -5,7 +5,6 @@ import { QRCodeList } from "@/components/QRCodeList";
 import { QRCodeStats } from "@/components/QRCodeStats";
 import { CreateQRDialog } from "@/components/CreateQRDialog";
 import { useState } from "react";
-import { Link } from "react-router-dom"; // Import Link from react-router-dom
 
 const Index = () => {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
@@ -26,11 +25,9 @@ const Index = () => {
           </div>
           
           <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm" asChild> {/* Use asChild to make Button a Link */}
-              <Link to="/settings">
-                <Settings className="w-4 h-4 mr-2" />
-                Configurações
-              </Link>
+            <Button variant="outline" size="sm">
+              <Settings className="w-4 h-4 mr-2" />
+              Configurações
             </Button>
             <Button 
               onClick={() => setShowCreateDialog(true)}
