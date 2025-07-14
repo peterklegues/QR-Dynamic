@@ -8,27 +8,25 @@ import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Settings from "./pages/Settings";
 import { SessionContextProvider } from "./integrations/supabase/auth";
-import React from "react"; // Import React for Fragment
+import React from "react";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
+    <Toaster />
+    <Sonner />
     <TooltipProvider>
-      <React.Fragment>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <SessionContextProvider>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </SessionContextProvider>
-        </BrowserRouter>
-      </React.Fragment>
+      <BrowserRouter>
+        <SessionContextProvider>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </SessionContextProvider>
+      </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
 );
