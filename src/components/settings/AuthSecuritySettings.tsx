@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react"; // Importar useState
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -9,8 +9,10 @@ import { useToast } from "@/hooks/use-toast";
 
 export function AuthSecuritySettings() {
   const { toast } = useToast();
+  const [publicMode, setPublicMode] = useState(false); // Adicionar estado para o modo público
 
   const handleSave = () => {
+    console.log("Salvando configurações de Autenticação & Segurança:", { publicMode }); // Adicionar log para o estado
     toast({
       title: "Configurações salvas!",
       description: "As configurações de Autenticação & Segurança foram atualizadas.",
@@ -40,8 +42,8 @@ export function AuthSecuritySettings() {
           <Label htmlFor="public-mode">Modo Público</Label>
           <Switch 
             id="public-mode" 
-            checked={false} // Mock: assumindo privado por padrão
-            onCheckedChange={(checked) => toast({ title: "Funcionalidade em desenvolvimento", description: `Modo público/privado: ${checked ? 'Ativado' : 'Desativado'}.` })}
+            checked={publicMode} // Conectar ao estado
+            onCheckedChange={setPublicMode} // Atualizar o estado
           />
         </div>
         <p className="text-xs text-muted-foreground -mt-4">
