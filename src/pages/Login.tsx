@@ -41,8 +41,6 @@ const Login = () => {
                     defaultButtonBackgroundHover: 'hsl(var(--secondary-foreground))',
                     defaultButtonBorder: 'hsl(var(--border))',
                     defaultButtonText: 'hsl(var(--secondary-foreground))',
-                    anchorText: 'hsl(var(--primary))',
-                    anchorTextHover: 'hsl(var(--primary-glow))',
                   },
                 },
               },
@@ -70,7 +68,7 @@ const Login = () => {
                 },
                 forgotten_password: {
                   email_label: 'Seu e-mail',
-                  password_reset_button_label: 'Enviar instruções de redefinição',
+                  button_label: 'Enviar instruções de redefinição',
                   link_text: 'Esqueceu sua senha?',
                   email_input_placeholder: 'email@exemplo.com',
                 },
@@ -89,7 +87,6 @@ const Login = () => {
                   phone_input_placeholder: 'Seu telefone',
                   token_input_placeholder: 'Código OTP',
                   button_label: 'Verificar código',
-                  link_text: 'Já tem um código? Verifique',
                 },
               },
             }}
