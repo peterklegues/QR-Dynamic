@@ -9,6 +9,7 @@ import { Plus, Search, MoreHorizontal, Edit, Trash2, Power, PowerOff, Mail } fro
 import { useToast } from "@/hooks/use-toast";
 import { AddUserDialog } from "./AddUserDialog"; // Importar o novo modal
 import { EditUserDialog } from "./EditUserDialog"; // Importar o novo modal de edição
+import { ResetPasswordDialog } from "./ResetPasswordDialog"; // Importar o novo modal de redefinição de senha
 
 interface UserData {
   id: string;
@@ -30,8 +31,10 @@ export function SystemAdministrationSettings() {
   const [users, setUsers] = useState<UserData[]>(mockUsers);
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddUserDialog, setShowAddUserDialog] = useState(false);
-  const [showEditUserDialog, setShowEditUserDialog] = useState(false); // Estado para controlar o modal de edição
-  const [selectedUser, setSelectedUser] = useState<UserData | null>(null); // Estado para o usuário selecionado para edição
+  const [showEditUserDialog, setShowEditUserDialog] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
+  const [showResetPasswordDialog, setShowResetPasswordDialog] = useState(false); // Estado para controlar o modal de redefinição de senha
+  const [userEmailToReset, setUserEmailToReset] = useState(""); // Estado para o email do usuário para redefinir senha
 
   const filteredUsers = users.filter(user =>
     user.email.toLowerCase().includes(searchTerm.toLowerCase())
@@ -64,7 +67,7 @@ export function SystemAdministrationSettings() {
       prevUsers.map(user => (user.id === updatedUser.id ? updatedUser : user))
     );
     setShowEditUserDialog(false);
-    setSelectedUser(null); // Limpar o usuário selecionado
+    setSelectedUser(null);
   };
 
   const handleToggleStatus = (id: string, currentStatus: string) => {
@@ -93,10 +96,8 @@ export function SystemAdministrationSettings() {
   };
 
   const handleResetPassword = (user: UserData) => {
-    toast({
-      title: "Redefinir Senha",
-      description: `Link de redefinição de senha enviado para ${user.email}.`,
-    });
+    setUserEmailToReset(user.email);
+    setShowResetPasswordDialog(true);
   };
 
   const getStatusBadge = (status: string) => {
@@ -241,6 +242,12 @@ export function SystemAdministrationSettings() {
           onUserUpdated={handleUserUpdated}
         />
       )}
+
+      <ResetPasswordDialog
+        open={showResetPasswordDialog}
+        onOpenChange={setShowResetPasswordDialog}
+        userEmail={userEmailToReset}
+      />
     </div>
   );
 }
