@@ -1,41 +1,13 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { QrCode, Plus, BarChart3, Settings, Zap, LogOut } from "lucide-react";
+import { QrCode, Plus, BarChart3, Settings, Zap } from "lucide-react";
 import { QRCodeList } from "@/components/QRCodeList";
 import { QRCodeStats } from "@/components/QRCodeStats";
 import { CreateQRDialog } from "@/components/CreateQRDialog";
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const [refreshTrigger, setRefreshTrigger] = useState(0); // State to trigger re-fetch in children
-  const { toast } = useToast();
-
-  const handleQrCodeCreated = () => {
-    setRefreshTrigger(prev => prev + 1); // Increment to trigger re-fetch
-  };
-
-  const handleLogout = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        throw error;
-      }
-      toast({
-        title: "Desconectado",
-        description: "Você foi desconectado com sucesso.",
-      });
-    } catch (error: any) {
-      console.error("Erro ao fazer logout:", error);
-      toast({
-        title: "Erro ao desconectar",
-        description: error.message || "Ocorreu um erro ao tentar desconectar.",
-        variant: "destructive",
-      });
-    }
-  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -63,10 +35,6 @@ const Index = () => {
             >
               <Plus className="w-4 h-4 mr-2" />
               Novo QR Code
-            </Button>
-            <Button variant="ghost" size="sm" onClick={handleLogout}>
-              <LogOut className="w-4 h-4 mr-2" />
-              Sair
             </Button>
           </div>
         </div>
@@ -138,7 +106,7 @@ const Index = () => {
       {/* Stats */}
       <section className="py-8 px-4 bg-muted/30">
         <div className="container mx-auto">
-          <QRCodeStats refreshTrigger={refreshTrigger} />
+          <QRCodeStats />
         </div>
       </section>
 
@@ -159,14 +127,13 @@ const Index = () => {
             </Button>
           </div>
           
-          <QRCodeList refreshTrigger={refreshTrigger} />
+          <QRCodeList />
         </div>
       </section>
 
       <CreateQRDialog 
         open={showCreateDialog} 
         onOpenChange={setShowCreateDialog} 
-        onQrCodeCreated={handleQrCodeCreated}
       />
     </div>
   );
