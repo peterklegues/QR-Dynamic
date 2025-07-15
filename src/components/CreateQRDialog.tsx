@@ -10,9 +10,10 @@ import { useToast } from "@/hooks/use-toast";
 interface CreateQRDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onQRCodeCreated: () => void; // Nova prop para callback
 }
 
-export function CreateQRDialog({ open, onOpenChange }: CreateQRDialogProps) {
+export function CreateQRDialog({ open, onOpenChange, onQRCodeCreated }: CreateQRDialogProps) {
   const [formData, setFormData] = useState({
     name: "",
     target_url: "",
@@ -41,7 +42,7 @@ export function CreateQRDialog({ open, onOpenChange }: CreateQRDialogProps) {
 
     // Resetar form e fechar dialog
     setFormData({ name: "", target_url: "", description: "" });
-    onOpenChange(false);
+    onQRCodeCreated(); // Chama o callback para notificar que um QR Code foi criado
   };
 
   return (

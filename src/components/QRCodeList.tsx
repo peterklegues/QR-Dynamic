@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { QrCode, ExternalLink, Edit, Trash2, BarChart3, Copy, Eye, MoreHorizontal } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
+import { useEffect } from "react"; // Import useEffect
 
 // Dados mock até conectar com Supabase
 const mockQRCodes = [
@@ -36,8 +37,19 @@ const mockQRCodes = [
   }
 ];
 
-export function QRCodeList() {
+interface QRCodeListProps {
+  refreshTrigger: number; // Nova prop para disparar a atualização
+}
+
+export function QRCodeList({ refreshTrigger }: QRCodeListProps) {
   const { toast } = useToast();
+
+  // Este useEffect será usado para re-fetch de dados reais do Supabase
+  // por enquanto, apenas para demonstrar que o refreshTrigger funciona
+  useEffect(() => {
+    console.log("QRCodeList refreshed! Trigger value:", refreshTrigger);
+    // Aqui será a lógica para buscar os QR Codes do Supabase
+  }, [refreshTrigger]);
 
   const handleCopyQRUrl = (url: string) => {
     navigator.clipboard.writeText(url);

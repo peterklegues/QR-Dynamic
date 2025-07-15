@@ -8,6 +8,12 @@ import { useState } from "react";
 
 const Index = () => {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(0); // Novo estado para disparar a atualização
+
+  const handleQRCodeCreated = () => {
+    setShowCreateDialog(false);
+    setRefreshTrigger(prev => prev + 1); // Incrementa para disparar a atualização da lista
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -127,13 +133,14 @@ const Index = () => {
             </Button>
           </div>
           
-          <QRCodeList />
+          <QRCodeList refreshTrigger={refreshTrigger} />
         </div>
       </section>
 
       <CreateQRDialog 
         open={showCreateDialog} 
         onOpenChange={setShowCreateDialog} 
+        onQRCodeCreated={handleQRCodeCreated} 
       />
     </div>
   );
