@@ -9,6 +9,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { Switch } from "@/components/ui/switch"; // Importar o componente Switch
 
 interface CreateQRDialogProps {
   open: boolean;
@@ -20,7 +21,8 @@ export function CreateQRDialog({ open, onOpenChange, onQRCodeCreated }: CreateQR
   const [formData, setFormData] = useState({
     name: "",
     target_url: "",
-    valid_until: undefined as Date | undefined, // Novo campo para a data de validade
+    valid_until: undefined as Date | undefined,
+    isActive: true, // Novo campo para o status ativo/inativo
   });
   const { toast } = useToast();
 
@@ -45,7 +47,7 @@ export function CreateQRDialog({ open, onOpenChange, onQRCodeCreated }: CreateQR
     });
 
     // Resetar form e fechar dialog
-    setFormData({ name: "", target_url: "", valid_until: undefined });
+    setFormData({ name: "", target_url: "", valid_until: undefined, isActive: true });
     onQRCodeCreated(); // Chama o callback para notificar que um QR Code foi criado
   };
 
@@ -99,7 +101,6 @@ export function CreateQRDialog({ open, onOpenChange, onQRCodeCreated }: CreateQR
             </p>
           </div>
 
-          {/* Novo campo: Válido até */}
           <div className="space-y-2">
             <Label htmlFor="valid_until" className="flex items-center gap-2">
               <CalendarIcon className="w-4 h-4" />
@@ -130,6 +131,19 @@ export function CreateQRDialog({ open, onOpenChange, onQRCodeCreated }: CreateQR
             <p className="text-xs text-muted-foreground">
               O QR Code será desativado automaticamente após esta data.
             </p>
+          </div>
+
+          {/* Novo campo: Ativo/Inativo */}
+          <div className="flex items-center justify-between space-x-2">
+            <Label htmlFor="is-active" className="flex items-center gap-2">
+              <Zap className="w-4 h-4" />
+              Ativo
+            </Label>
+            <Switch
+              id="is-active"
+              checked={formData.isActive}
+              onCheckedChange={(checked) => setFormData({ ...formData, isActive: checked })}
+            />
           </div>
 
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
