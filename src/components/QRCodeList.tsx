@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { QrCode, ExternalLink, Edit, Trash2, BarChart3, Copy, Eye, MoreHorizontal } from "lucide-react";
+import { QrCode, ExternalLink, Edit, Trash2, BarChart3, Copy, Eye, MoreHorizontal, PowerOff } from "lucide-react"; // Importar PowerOff icon
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect } from "react";
@@ -59,6 +59,15 @@ export function QRCodeList({ refreshTrigger, onEditQRCode }: QRCodeListProps) {
     });
   };
 
+  const handleDeactivate = (id: string) => {
+    toast({
+      title: "Desativar QR Code",
+      description: `Funcionalidade para desativar o QR Code ${id} será implementada com Supabase`,
+      variant: "default", // Pode ser 'default' ou 'warning' dependendo da sua preferência
+    });
+    // Lógica para desativar o QR Code no Supabase
+  };
+
   const handleDelete = (id: string) => {
     toast({
       title: "Excluir QR Code",
@@ -103,7 +112,7 @@ export function QRCodeList({ refreshTrigger, onEditQRCode }: QRCodeListProps) {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => onEditQRCode(qr)}> {/* Chama a prop onEditQRCode */}
+                    <DropdownMenuItem onClick={() => onEditQRCode(qr)}>
                       <Edit className="w-4 h-4 mr-2" />
                       Editar
                     </DropdownMenuItem>
@@ -114,6 +123,10 @@ export function QRCodeList({ refreshTrigger, onEditQRCode }: QRCodeListProps) {
                     <DropdownMenuItem onClick={() => window.open(qr.target_url, '_blank')}>
                       <Eye className="w-4 h-4 mr-2" />
                       Visualizar
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleDeactivate(qr.id)}> {/* Novo botão Desativar */}
+                      <PowerOff className="w-4 h-4 mr-2" />
+                      Desativar
                     </DropdownMenuItem>
                     <DropdownMenuItem 
                       onClick={() => handleDelete(qr.id)}
@@ -141,7 +154,7 @@ export function QRCodeList({ refreshTrigger, onEditQRCode }: QRCodeListProps) {
               </div>
               
               <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" onClick={() => onEditQRCode(qr)}> {/* Chama a prop onEditQRCode */}
+                <Button variant="outline" size="sm" onClick={() => onEditQRCode(qr)}>
                   <Edit className="w-4 h-4 mr-2" />
                   Editar
                 </Button>
