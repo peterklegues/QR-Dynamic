@@ -2,7 +2,6 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { QrCode, Link, Tag, Zap } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -17,7 +16,6 @@ export function CreateQRDialog({ open, onOpenChange, onQRCodeCreated }: CreateQR
   const [formData, setFormData] = useState({
     name: "",
     target_url: "",
-    description: ""
   });
   const { toast } = useToast();
 
@@ -41,7 +39,7 @@ export function CreateQRDialog({ open, onOpenChange, onQRCodeCreated }: CreateQR
     });
 
     // Resetar form e fechar dialog
-    setFormData({ name: "", target_url: "", description: "" });
+    setFormData({ name: "", target_url: "" });
     onQRCodeCreated(); // Chama o callback para notificar que um QR Code foi criado
   };
 
@@ -93,18 +91,6 @@ export function CreateQRDialog({ open, onOpenChange, onQRCodeCreated }: CreateQR
             <p className="text-xs text-muted-foreground">
               Esta URL pode ser alterada a qualquer momento sem precisar gerar um novo QR Code
             </p>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="description">Descrição (opcional)</Label>
-            <Textarea
-              id="description"
-              placeholder="Descreva o propósito deste QR Code..."
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="bg-background resize-none"
-              rows={3}
-            />
           </div>
 
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
