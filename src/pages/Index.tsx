@@ -1,18 +1,24 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { QrCode, Plus, BarChart3, Settings, Zap } from "lucide-react";
+import { QrCode, Plus, BarChart3, Settings, Zap, LogOut } from "lucide-react"; // Importar LogOut
 import { QRCodeList } from "@/components/QRCodeList";
 import { QRCodeStats } from "@/components/QRCodeStats";
 import { CreateQRDialog } from "@/components/CreateQRDialog";
 import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client"; // Importar supabase client
 
 const Index = () => {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const [refreshTrigger, setRefreshTrigger] = useState(0); // Novo estado para disparar a atualização
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const handleQRCodeCreated = () => {
     setShowCreateDialog(false);
-    setRefreshTrigger(prev => prev + 1); // Incrementa para disparar a atualização da lista
+    setRefreshTrigger(prev => prev + 1);
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    // O redirecionamento para a página de login é tratado pelo SessionContextProvider
   };
 
   return (
@@ -41,6 +47,10 @@ const Index = () => {
             >
               <Plus className="w-4 h-4 mr-2" />
               Novo QR Code
+            </Button>
+            <Button variant="ghost" size="sm" onClick={handleLogout}> {/* Botão de Logout */}
+              <LogOut className="w-4 h-4 mr-2" />
+              Sair
             </Button>
           </div>
         </div>
