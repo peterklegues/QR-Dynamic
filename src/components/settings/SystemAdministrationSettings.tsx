@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Plus, Search, MoreHorizontal, Edit, Trash2, Power, PowerOff, Mail } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { AddUserDialog } from "./AddUserDialog"; // Importar o novo modal
 
 interface UserData {
   id: string;
@@ -27,22 +28,33 @@ export function SystemAdministrationSettings() {
   const { toast } = useToast();
   const [users, setUsers] = useState<UserData[]>(mockUsers);
   const [searchTerm, setSearchTerm] = useState("");
+  const [showAddUserDialog, setShowAddUserDialog] = useState(false); // Estado para controlar o modal
 
   const filteredUsers = users.filter(user =>
     user.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleAddUser = () => {
-    toast({
-      title: "Adicionar Usuário",
-      description: "Funcionalidade de adicionar usuário será implementada.",
-    });
+    setShowAddUserDialog(true);
+  };
+
+  const handleUserAdded = (newUser: { email: string; password?: string }) => {
+    const newId = `user${users.length + 1}`;
+    const newUserData: UserData = {
+      id: newId,
+      email: newUser.email,
+      status: "Ativo", // Novo usuário começa como ativo
+      lastSignIn: "Nunca", // Ou "N/A"
+      createdAt: new Date().toISOString().split('T')[0], // Data atual
+    };
+    setUsers(prevUsers => [...prevUsers, newUserData]);
+    setShowAddUserDialog(false);
   };
 
   const handleEditUser = (user: UserData) => {
     toast({
       title: "Editar Usuário",
-      description: `Editando usuário: ${user.email}.`,
+      description: `Funcionalidade de edição para ${user.email} será implementada.`,
     });
   };
 
@@ -205,6 +217,12 @@ export function SystemAdministrationSettings() {
           </div>
         </CardContent>
       </Card>
+
+      <AddUserDialog
+        open={showAddUserDialog}
+        onOpenChange={setShowAddUserDialog}
+        onUserAdded={handleUserAdded}
+      />
     </div>
   );
 }
