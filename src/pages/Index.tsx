@@ -1,12 +1,13 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { QrCode, Plus, BarChart3, Settings, Zap, LogOut } from "lucide-react";
+import { QrCode, Plus, BarChart3, Settings as SettingsIcon, Zap, LogOut } from "lucide-react"; // Renomear Settings para SettingsIcon
 import { QRCodeList } from "@/components/QRCodeList";
 import { QRCodeStats } from "@/components/QRCodeStats";
 import { CreateQRDialog } from "@/components/CreateQRDialog";
 import { EditQRDialog } from "@/components/EditQRDialog";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom"; // Importar useNavigate
 
 interface QRCodeData {
   id: string;
@@ -24,6 +25,7 @@ const Index = () => {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [selectedQRCode, setSelectedQRCode] = useState<QRCodeData | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const navigate = useNavigate(); // Inicializar useNavigate
 
   const handleQRCodeCreated = () => {
     setShowCreateDialog(false);
@@ -60,15 +62,14 @@ const Index = () => {
           </div>
           
           <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm">
-              <Settings className="w-4 h-4 mr-2" />
+            <Button variant="outline" size="sm" onClick={() => navigate('/settings')}> {/* Adicionar onClick para navegar */}
+              <SettingsIcon className="w-4 h-4 mr-2" />
               Configurações
             </Button>
             <Button variant="ghost" size="sm" onClick={handleLogout}>
               <LogOut className="w-4 h-4 mr-2" />
               Sair
             </Button>
-            {/* O botão "Novo QR Code" foi movido para fora do header */}
           </div>
         </div>
       </header>
@@ -133,7 +134,7 @@ const Index = () => {
             <Card className="bg-card/50 border-border hover:shadow-lg transition-all duration-300">
               <CardHeader className="pb-3">
                 <div className="w-12 h-12 rounded-lg bg-warning/20 flex items-center justify-center mb-3">
-                  <Settings className="w-6 h-6 text-warning" />
+                  <SettingsIcon className="w-6 h-6 text-warning" />
                 </div>
                 <CardTitle className="text-lg">Controle</CardTitle>
               </CardHeader>
