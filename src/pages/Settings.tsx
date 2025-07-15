@@ -6,8 +6,7 @@ import { AuthSecuritySettings } from "@/components/settings/AuthSecuritySettings
 import { DomainRedirectSettings } from "@/components/settings/DomainRedirectSettings";
 import { LogConfiguration } from "@/components/settings/LogConfiguration";
 import { NotificationAlertSettings } from "@/components/settings/NotificationAlertSettings";
-import { IntegrationsSettings } from "@/components/settings/IntegrationsSettings";
-import { SystemAdministrationSettings } from "@/components/settings/SystemAdministrationSettings"; // Importar o novo componente
+import { IntegrationsSettings } from "@/components/settings/IntegrationsSettings"; // Importar o novo componente
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -35,7 +34,7 @@ const settingsSections = [
   {
     title: "Integrações",
     icon: Puzzle,
-    component: IntegrationsSettings,
+    component: IntegrationsSettings, // Usar o novo componente aqui
   },
   {
     title: "Estilo dos QR Codes",
@@ -55,7 +54,7 @@ const settingsSections = [
   {
     title: "Administração do Sistema",
     icon: Users,
-    component: SystemAdministrationSettings, // Usar o novo componente aqui
+    component: () => <div className="p-6 text-muted-foreground">Conteúdo para Administração do Sistema</div>,
   },
   {
     title: "Backup e Exportação",
