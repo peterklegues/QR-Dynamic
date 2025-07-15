@@ -5,7 +5,8 @@ import { SidebarNav } from "@/components/SidebarNav";
 import { AuthSecuritySettings } from "@/components/settings/AuthSecuritySettings";
 import { DomainRedirectSettings } from "@/components/settings/DomainRedirectSettings";
 import { LogConfiguration } from "@/components/settings/LogConfiguration";
-import { NotificationAlertSettings } from "@/components/settings/NotificationAlertSettings"; // Importar o novo componente
+import { NotificationAlertSettings } from "@/components/settings/NotificationAlertSettings";
+import { IntegrationsSettings } from "@/components/settings/IntegrationsSettings"; // Importar o novo componente
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -28,12 +29,12 @@ const settingsSections = [
   {
     title: "Notificações & Alertas",
     icon: Bell,
-    component: NotificationAlertSettings, // Usar o novo componente aqui
+    component: NotificationAlertSettings,
   },
   {
     title: "Integrações",
     icon: Puzzle,
-    component: () => <div className="p-6 text-muted-foreground">Conteúdo para Integrações</div>,
+    component: IntegrationsSettings, // Usar o novo componente aqui
   },
   {
     title: "Estilo dos QR Codes",
