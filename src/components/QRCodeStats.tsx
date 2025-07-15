@@ -1,72 +1,34 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { QrCode, MousePointer, TrendingUp, Users } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useSession } from "@/integrations/supabase/auth";
+import { useState, useEffect } from "react"; // Import useState and useEffect
 
 interface QRCodeStatsProps {
   refreshTrigger: number; // Prop to trigger re-fetch
 }
 
 export function QRCodeStats({ refreshTrigger }: QRCodeStatsProps) {
-  const { session, isLoading: sessionLoading } = useSession();
-  const ownerId = session?.user?.id;
+  const [stats, setStats] = useState({ total_qr_codes: 0, total_scans: 0, active_qr_codes: 0, scan_growth: 0 });
+  const [isLoading, setIsLoading] = useState(true);
 
-  const fetchStats = async () => {
-    if (!ownerId) return { total_qr_codes: 0, total_scans: 0, active_qr_codes: 0, scan_growth: 0 };
-
-    // Fetch total QR codes
-    const { count: totalQrCodes, error: totalError } = await supabase
-      .from('qr_codes')
-      .select('*', { count: 'exact' })
-      .eq('owner_id', ownerId);
-
-    if (totalError) throw totalError;
-
-    // Fetch active QR codes
-    const { count: activeQrCodes, error: activeError } = await supabase
-      .from('qr_codes')
-      .select('*', { count: 'exact' })
-      .eq('owner_id', ownerId)
-      .eq('is_ativo', true);
-
-    if (activeError) throw activeError;
-
-    // Fetch total scans (sum of scan_count for all user's QR codes)
-    const { data: scanData, error: scanError } = await supabase
-      .from('qr_codes')
-      .select('scan_count')
-      .eq('owner_id', ownerId);
-
-    if (scanError) throw scanError;
-
-    const totalScans = scanData.reduce((sum, qr) => sum + qr.scan_count, 0);
-
-    // Placeholder for scan_growth (requires more complex logic, e.g., comparing current month to previous)
-    // For now, we'll keep it at 0 or a mock value.
-    const scanGrowth = 0; // This would be calculated based on time-series data
-
-    return {
-      total_qr_codes: totalQrCodes || 0,
-      total_scans: totalScans,
-      active_qr_codes: activeQrCodes || 0,
-      scan_growth: scanGrowth,
-    };
+  // Mock data for demonstration
+  const mockStats = {
+    total_qr_codes: 5,
+    total_scans: 2500,
+    active_qr_codes: 3,
+    scan_growth: 15, // Example growth percentage
   };
 
-  const { data: stats, isLoading, error } = useQuery({
-    queryKey: ['qr_code_stats', ownerId, refreshTrigger], // Add refreshTrigger to queryKey
-    queryFn: fetchStats,
-    enabled: !!ownerId && !sessionLoading,
-    initialData: { total_qr_codes: 0, total_scans: 0, active_qr_codes: 0, scan_growth: 0 }, // Provide initial data to avoid undefined
-  });
+  useEffect(() => {
+    setIsLoading(true);
+    // Simulate fetching data
+    setTimeout(() => {
+      setStats(mockStats);
+      setIsLoading(false);
+    }, 500);
+  }, [refreshTrigger]); // Re-fetch mock data when refreshTrigger changes
 
-  if (isLoading || sessionLoading) {
+  if (isLoading) {
     return <div className="text-center text-muted-foreground">Carregando estatísticas...</div>;
-  }
-
-  if (error) {
-    return <div className="text-center text-destructive">Erro ao carregar estatísticas: {error.message}</div>;
   }
 
   return (

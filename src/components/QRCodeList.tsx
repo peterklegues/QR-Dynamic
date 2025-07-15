@@ -4,9 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { QrCode, ExternalLink, Edit, Trash2, BarChart3, Copy, Eye, MoreHorizontal } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useSession } from "@/integrations/supabase/auth";
+import { useState, useEffect } from "react"; // Import useState and useEffect
 
 interface QRCode {
   id: string;
@@ -24,29 +22,48 @@ interface QRCodeListProps {
 
 export function QRCodeList({ refreshTrigger }: QRCodeListProps) {
   const { toast } = useToast();
-  const { session, isLoading: sessionLoading } = useSession();
-  const queryClient = useQueryClient();
-  const ownerId = session?.user?.id;
+  const [qrCodes, setQrCodes] = useState<QRCode[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const fetchQRCodes = async (): Promise<QRCode[]> => {
-    if (!ownerId) return [];
-    const { data, error } = await supabase
-      .from('qr_codes')
-      .select('*')
-      .eq('owner_id', ownerId)
-      .order('created_at', { ascending: false });
+  // Mock data for demonstration
+  const mockQRCodes: QRCode[] = [
+    {
+      id: "1",
+      name: "Campanha de Verão 2024",
+      target_url: "https://exemplo.com/verao",
+      status: "Ativo",
+      scan_count: 1250,
+      created_at: "2024-01-15T10:00:00Z",
+      qr_url: "https://mockqr.app/verao",
+    },
+    {
+      id: "2",
+      name: "Menu Digital Restaurante",
+      target_url: "https://restaurantemock.com/menu",
+      status: "Ativo",
+      scan_count: 890,
+      created_at: "2024-02-20T14:30:00Z",
+      qr_url: "https://mockqr.app/menu",
+    },
+    {
+      id: "3",
+      name: "Pesquisa de Satisfação",
+      target_url: "https://pesquisamock.com/satisfacao",
+      status: "Inativo",
+      scan_count: 320,
+      created_at: "2024-03-01T09:15:00Z",
+      qr_url: "https://mockqr.app/pesquisa",
+    },
+  ];
 
-    if (error) {
-      throw error;
-    }
-    return data as QRCode[];
-  };
-
-  const { data: qrCodes, isLoading, error } = useQuery<QRCode[]>({
-    queryKey: ['qr_codes', ownerId, refreshTrigger], // Add refreshTrigger to queryKey
-    queryFn: fetchQRCodes,
-    enabled: !!ownerId && !sessionLoading, // Only fetch if ownerId is available and session is not loading
-  });
+  useEffect(() => {
+    setIsLoading(true);
+    // Simulate fetching data
+    setTimeout(() => {
+      setQrCodes(mockQRCodes);
+      setIsLoading(false);
+    }, 500);
+  }, [refreshTrigger]); // Re-fetch mock data when refreshTrigger changes
 
   const handleCopyQRUrl = (url: string) => {
     navigator.clipboard.writeText(url);
@@ -59,39 +76,20 @@ export function QRCodeList({ refreshTrigger }: QRCodeListProps) {
   const handleEdit = (id: string) => {
     toast({
       title: "Editar QR Code",
-      description: "Funcionalidade de edição será implementada em breve.",
+      description: "Funcionalidade de edição será implementada em breve (simulado).",
     });
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Tem certeza que deseja excluir este QR Code?")) {
+  const handleDelete = (id: string) => {
+    if (!confirm("Tem certeza que deseja excluir este QR Code (simulado)?")) {
       return;
     }
-    try {
-      const { error } = await supabase
-        .from('qr_codes')
-        .delete()
-        .eq('id', id)
-        .eq('owner_id', ownerId); // Ensure only owner can delete
-
-      if (error) {
-        throw error;
-      }
-
-      toast({
-        title: "QR Code excluído!",
-        description: "O QR Code foi removido com sucesso.",
-      });
-      queryClient.invalidateQueries({ queryKey: ['qr_codes', ownerId] }); // Invalidate to re-fetch list
-      queryClient.invalidateQueries({ queryKey: ['qr_code_stats', ownerId] }); // Invalidate stats
-    } catch (error: any) {
-      console.error("Erro ao excluir QR Code:", error);
-      toast({
-        title: "Erro ao excluir QR Code",
-        description: error.message || "Ocorreu um erro inesperado.",
-        variant: "destructive",
-      });
-    }
+    // Simulate deletion
+    setQrCodes(prev => prev.filter(qr => qr.id !== id));
+    toast({
+      title: "QR Code excluído!",
+      description: "O QR Code foi removido com sucesso (simulado).",
+    });
   };
 
   const getStatusBadge = (status: string) => {
@@ -102,12 +100,8 @@ export function QRCodeList({ refreshTrigger }: QRCodeListProps) {
     );
   };
 
-  if (isLoading || sessionLoading) {
+  if (isLoading) {
     return <div className="text-center text-muted-foreground">Carregando QR Codes...</div>;
-  }
-
-  if (error) {
-    return <div className="text-center text-destructive">Erro ao carregar QR Codes: {error.message}</div>;
   }
 
   if (!qrCodes || qrCodes.length === 0) {

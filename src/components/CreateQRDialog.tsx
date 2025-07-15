@@ -6,8 +6,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { QrCode, Link, Tag, Zap } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
-import { useSession } from "@/integrations/supabase/auth";
 
 interface CreateQRDialogProps {
   open: boolean;
@@ -23,22 +21,10 @@ export function CreateQRDialog({ open, onOpenChange, onQrCodeCreated }: CreateQR
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
-  const { session } = useSession();
-  const ownerId = session?.user?.id;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-
-    if (!ownerId) {
-      toast({
-        title: "Erro de autenticação",
-        description: "Você precisa estar logado para criar QR Codes.",
-        variant: "destructive"
-      });
-      setIsSubmitting(false);
-      return;
-    }
     
     if (!formData.name || !formData.target_url) {
       toast({
@@ -50,34 +36,14 @@ export function CreateQRDialog({ open, onOpenChange, onQrCodeCreated }: CreateQR
       return;
     }
 
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
     try {
-      // Generate a simple QR code string for now. In a real app, you might use a QR code generation service.
-      const qrCodeString = `https://qr.dynamic.app/${Math.random().toString(36).substring(2, 10)}`;
-
-      const { data, error } = await supabase
-        .from('qr_codes')
-        .insert([
-          { 
-            name: formData.name, 
-            target_url: formData.target_url, 
-            description: formData.description,
-            owner_id: ownerId,
-            codigo_qr: qrCodeString, // Storing a placeholder QR code string
-            qr_url: qrCodeString, // Assuming qr_url is the same as codigo_qr for now
-            is_ativo: true, // Default to active
-            status: 'Ativo', // Default status
-            scan_count: 0, // Initial scan count
-          }
-        ])
-        .select();
-
-      if (error) {
-        throw error;
-      }
-
+      // Simulate successful QR code creation
       toast({
         title: "QR Code criado com sucesso!",
-        description: "Seu novo QR Code dinâmico foi salvo.",
+        description: "Seu novo QR Code dinâmico foi salvo (simulado).",
       });
 
       setFormData({ name: "", target_url: "", description: "" });
@@ -85,9 +51,9 @@ export function CreateQRDialog({ open, onOpenChange, onQrCodeCreated }: CreateQR
       onQrCodeCreated(); // Notify parent to refresh list
 
     } catch (error: any) {
-      console.error("Erro ao criar QR Code:", error);
+      console.error("Erro ao criar QR Code (simulado):", error);
       toast({
-        title: "Erro ao criar QR Code",
+        title: "Erro ao criar QR Code (simulado)",
         description: error.message || "Ocorreu um erro inesperado.",
         variant: "destructive"
       });
@@ -139,7 +105,7 @@ export function CreateQRDialog({ open, onOpenChange, onQrCodeCreated }: CreateQR
               type="url"
               placeholder="https://exemplo.com/destino"
               value={formData.target_url}
-              onChange={(e) => setFormData({ ...formData, target: e.target.value })}
+              onChange={(e) => setFormData({ ...formData, target_url: e.target.value })} {/* Corrected to target_url */}
               className="bg-background"
               disabled={isSubmitting}
             />

@@ -5,36 +5,26 @@ import { QRCodeList } from "@/components/QRCodeList";
 import { QRCodeStats } from "@/components/QRCodeStats";
 import { CreateQRDialog } from "@/components/CreateQRDialog";
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const Index = () => {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0); // State to trigger re-fetch in children
   const { toast } = useToast();
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const handleQrCodeCreated = () => {
     setRefreshTrigger(prev => prev + 1); // Increment to trigger re-fetch
   };
 
-  const handleLogout = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        throw error;
-      }
-      toast({
-        title: "Desconectado",
-        description: "Você foi desconectado com sucesso.",
-      });
-    } catch (error: any) {
-      console.error("Erro ao fazer logout:", error);
-      toast({
-        title: "Erro ao desconectar",
-        description: error.message || "Ocorreu um erro ao tentar desconectar.",
-        variant: "destructive",
-      });
-    }
+  const handleLogout = () => {
+    // Simulate logout by redirecting to the mock login page
+    toast({
+      title: "Desconectado",
+      description: "Você foi desconectado com sucesso (simulado).",
+    });
+    navigate('/login');
   };
 
   return (
