@@ -1,13 +1,25 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { QrCode, ExternalLink, Edit, Trash2, BarChart3, Copy, Eye, MoreHorizontal, PowerOff } from "lucide-react"; // Importar PowerOff icon
+import { QrCode, ExternalLink, Edit, Trash2, BarChart3, Copy, Eye, MoreHorizontal, PowerOff } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
-import { useEffect } from "react";
+import { useEffect, useState } from "react"; // Importar useState
 
-// Dados mock até conectar com Supabase
-const mockQRCodes = [
+// Definir a interface para os dados do QR Code
+interface QRCodeData {
+  id: string;
+  name: string;
+  target_url: string;
+  status: string;
+  scan_count: number;
+  created_at: string;
+  qr_url: string;
+  valid_until?: Date;
+}
+
+// Dados mock iniciais
+const initialMockQRCodes: QRCodeData[] = [
   {
     id: "1",
     name: "Campanha de Natal",
@@ -16,7 +28,7 @@ const mockQRCodes = [
     scan_count: 1247,
     created_at: "2024-12-01",
     qr_url: "https://api.exemplo.com/qr/abc123",
-    valid_until: new Date("2025-01-31") // Adicionado para teste
+    valid_until: new Date("2025-01-31")
   },
   {
     id: "2", 
@@ -40,15 +52,18 @@ const mockQRCodes = [
 
 interface QRCodeListProps {
   refreshTrigger: number;
-  onEditQRCode: (qrCode: typeof mockQRCodes[0]) => void; // Nova prop para editar
+  onEditQRCode: (qrCode: QRCodeData) => void;
 }
 
 export function QRCodeList({ refreshTrigger, onEditQRCode }: QRCodeListProps) {
+  const [qrCodes, setQrCodes] = useState<QRCodeData[]>(initialMockQRCodes); // Usar estado para os QR Codes
   const { toast } = useToast();
 
   useEffect(() => {
     console.log("QRCodeList refreshed! Trigger value:", refreshTrigger);
-    // Aqui será a lógica para buscar os QR Codes do Supabase
+    // Em um cenário real, aqui você buscaria os dados do Supabase
+    // Por enquanto, apenas redefinimos os mocks se o trigger for acionado
+    // setQrCodes(initialMockQRCodes); // Descomente se quiser que o refreshTrigger resete os dados mock
   }, [refreshTrigger]);
 
   const handleCopyQRUrl = (url: string) => {
@@ -60,18 +75,23 @@ export function QRCodeList({ refreshTrigger, onEditQRCode }: QRCodeListProps) {
   };
 
   const handleDeactivate = (id: string) => {
+    setQrCodes(prevQrCodes => 
+      prevQrCodes.map(qr => 
+        qr.id === id ? { ...qr, status: "Inativo" } : qr
+      )
+    );
     toast({
-      title: "Desativar QR Code",
-      description: `Funcionalidade para desativar o QR Code ${id} será implementada com Supabase`,
-      variant: "default", // Pode ser 'default' ou 'warning' dependendo da sua preferência
+      title: "QR Code desativado!",
+      description: `O QR Code com ID ${id} foi desativado.`,
+      variant: "default",
     });
-    // Lógica para desativar o QR Code no Supabase
   };
 
   const handleDelete = (id: string) => {
+    setQrCodes(prevQrCodes => prevQrCodes.filter(qr => qr.id !== id));
     toast({
-      title: "Excluir QR Code",
-      description: "Funcionalidade será implementada com Supabase",
+      title: "QR Code excluído!",
+      description: `O QR Code com ID ${id} foi removido.`,
       variant: "destructive",
     });
   };
@@ -86,93 +106,95 @@ export function QRCodeList({ refreshTrigger, onEditQRCode }: QRCodeListProps) {
 
   return (
     <div className="grid gap-4">
-      {mockQRCodes.map((qr) => (
-        <Card key={qr.id} className="bg-card/50 border-border hover:shadow-lg transition-all duration-300">
-          <CardHeader className="pb-4">
-            <div className="flex items-start justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-primary/20 to-primary-glow/20 flex items-center justify-center">
-                  <QrCode className="w-6 h-6 text-primary" />
+      {qrCodes.length > 0 ? (
+        qrCodes.map((qr) => (
+          <Card key={qr.id} className="bg-card/50 border-border hover:shadow-lg transition-all duration-300">
+            <CardHeader className="pb-4">
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-primary/20 to-primary-glow/20 flex items-center justify-center">
+                    <QrCode className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-lg">{qr.name}</CardTitle>
+                    <CardDescription className="flex items-center gap-2 mt-1">
+                      <ExternalLink className="w-3 h-3" />
+                      {qr.target_url}
+                    </CardDescription>
+                  </div>
                 </div>
-                <div>
-                  <CardTitle className="text-lg">{qr.name}</CardTitle>
-                  <CardDescription className="flex items-center gap-2 mt-1">
-                    <ExternalLink className="w-3 h-3" />
-                    {qr.target_url}
-                  </CardDescription>
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                {getStatusBadge(qr.status)}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm">
-                      <MoreHorizontal className="w-4 h-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => onEditQRCode(qr)}>
-                      <Edit className="w-4 h-4 mr-2" />
-                      Editar
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleCopyQRUrl(qr.qr_url)}>
-                      <Copy className="w-4 h-4 mr-2" />
-                      Copiar URL
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => window.open(qr.target_url, '_blank')}>
-                      <Eye className="w-4 h-4 mr-2" />
-                      Visualizar
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleDeactivate(qr.id)}> {/* Novo botão Desativar */}
-                      <PowerOff className="w-4 h-4 mr-2" />
-                      Desativar
-                    </DropdownMenuItem>
-                    <DropdownMenuItem 
-                      onClick={() => handleDelete(qr.id)}
-                      className="text-destructive"
-                    >
-                      <Trash2 className="w-4 h-4 mr-2" />
-                      Excluir
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            </div>
-          </CardHeader>
-          
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-6 text-sm text-muted-foreground">
+                
                 <div className="flex items-center gap-2">
-                  <BarChart3 className="w-4 h-4" />
-                  {qr.scan_count} scans
-                </div>
-                <div>
-                  Criado em {new Date(qr.created_at).toLocaleDateString('pt-BR')}
+                  {getStatusBadge(qr.status)}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm">
+                        <MoreHorizontal className="w-4 h-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => onEditQRCode(qr)}>
+                        <Edit className="w-4 h-4 mr-2" />
+                        Editar
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleCopyQRUrl(qr.qr_url)}>
+                        <Copy className="w-4 h-4 mr-2" />
+                        Copiar URL
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => window.open(qr.target_url, '_blank')}>
+                        <Eye className="w-4 h-4 mr-2" />
+                        Visualizar
+                      </DropdownMenuItem>
+                      {qr.status === "Ativo" && ( // Mostrar "Desativar" apenas se estiver ativo
+                        <DropdownMenuItem onClick={() => handleDeactivate(qr.id)}>
+                          <PowerOff className="w-4 h-4 mr-2" />
+                          Desativar
+                        </DropdownMenuItem>
+                      )}
+                      <DropdownMenuItem 
+                        onClick={() => handleDelete(qr.id)}
+                        className="text-destructive"
+                      >
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Excluir
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </div>
-              
-              <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" onClick={() => onEditQRCode(qr)}>
-                  <Edit className="w-4 h-4 mr-2" />
-                  Editar
-                </Button>
-                <Button 
-                  size="sm" 
-                  onClick={() => handleCopyQRUrl(qr.qr_url)}
-                  className="bg-gradient-to-r from-primary to-primary-glow"
-                >
-                  <Copy className="w-4 h-4 mr-2" />
-                  Copiar
-                </Button>
+            </CardHeader>
+            
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-6 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    <BarChart3 className="w-4 h-4" />
+                    {qr.scan_count} scans
+                  </div>
+                  <div>
+                    Criado em {new Date(qr.created_at).toLocaleDateString('pt-BR')}
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="sm" onClick={() => onEditQRCode(qr)}>
+                    <Edit className="w-4 h-4 mr-2" />
+                    Editar
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    onClick={() => handleCopyQRUrl(qr.qr_url)}
+                    className="bg-gradient-to-r from-primary to-primary-glow"
+                  >
+                    <Copy className="w-4 h-4 mr-2" />
+                    Copiar
+                  </Button>
+                </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
-      
-      {mockQRCodes.length === 0 && (
+            </CardContent>
+          </Card>
+        ))
+      ) : (
         <Card className="bg-card/30 border-dashed border-2 border-border">
           <CardContent className="flex flex-col items-center justify-center py-12">
             <QrCode className="w-12 h-12 text-muted-foreground mb-4" />
