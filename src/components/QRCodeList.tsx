@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { QrCode, ExternalLink, Edit, Trash2, BarChart3, Copy, Eye, MoreHorizontal } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
-import { useEffect } from "react"; // Import useEffect
+import { useEffect } from "react";
 
 // Dados mock até conectar com Supabase
 const mockQRCodes = [
@@ -15,7 +15,8 @@ const mockQRCodes = [
     status: "Ativo",
     scan_count: 1247,
     created_at: "2024-12-01",
-    qr_url: "https://api.exemplo.com/qr/abc123"
+    qr_url: "https://api.exemplo.com/qr/abc123",
+    valid_until: new Date("2025-01-31") // Adicionado para teste
   },
   {
     id: "2", 
@@ -38,14 +39,13 @@ const mockQRCodes = [
 ];
 
 interface QRCodeListProps {
-  refreshTrigger: number; // Nova prop para disparar a atualização
+  refreshTrigger: number;
+  onEditQRCode: (qrCode: typeof mockQRCodes[0]) => void; // Nova prop para editar
 }
 
-export function QRCodeList({ refreshTrigger }: QRCodeListProps) {
+export function QRCodeList({ refreshTrigger, onEditQRCode }: QRCodeListProps) {
   const { toast } = useToast();
 
-  // Este useEffect será usado para re-fetch de dados reais do Supabase
-  // por enquanto, apenas para demonstrar que o refreshTrigger funciona
   useEffect(() => {
     console.log("QRCodeList refreshed! Trigger value:", refreshTrigger);
     // Aqui será a lógica para buscar os QR Codes do Supabase
@@ -56,13 +56,6 @@ export function QRCodeList({ refreshTrigger }: QRCodeListProps) {
     toast({
       title: "URL copiada!",
       description: "Link do QR Code copiado para a área de transferência",
-    });
-  };
-
-  const handleEdit = (id: string) => {
-    toast({
-      title: "Editar QR Code",
-      description: "Funcionalidade será implementada com Supabase",
     });
   };
 
@@ -110,7 +103,7 @@ export function QRCodeList({ refreshTrigger }: QRCodeListProps) {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => handleEdit(qr.id)}>
+                    <DropdownMenuItem onClick={() => onEditQRCode(qr)}> {/* Chama a prop onEditQRCode */}
                       <Edit className="w-4 h-4 mr-2" />
                       Editar
                     </DropdownMenuItem>
@@ -148,7 +141,7 @@ export function QRCodeList({ refreshTrigger }: QRCodeListProps) {
               </div>
               
               <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" onClick={() => handleEdit(qr.id)}>
+                <Button variant="outline" size="sm" onClick={() => onEditQRCode(qr)}> {/* Chama a prop onEditQRCode */}
                   <Edit className="w-4 h-4 mr-2" />
                   Editar
                 </Button>
@@ -175,7 +168,7 @@ export function QRCodeList({ refreshTrigger }: QRCodeListProps) {
               Comece criando seu primeiro QR Code dinâmico
             </p>
             <Button>
-              <QrCode className="w-4 h-4 mr-2" />
+              <Plus className="w-4 h-4 mr-2" />
               Criar Primeiro QR Code
             </Button>
           </CardContent>

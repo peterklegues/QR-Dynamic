@@ -1,19 +1,44 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { QrCode, Plus, BarChart3, Settings, Zap, LogOut } from "lucide-react"; // Importar LogOut
+import { QrCode, Plus, BarChart3, Settings, Zap, LogOut } from "lucide-react";
 import { QRCodeList } from "@/components/QRCodeList";
 import { QRCodeStats } from "@/components/QRCodeStats";
 import { CreateQRDialog } from "@/components/CreateQRDialog";
+import { EditQRDialog } from "@/components/EditQRDialog"; // Importar o novo modal de edição
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client"; // Importar supabase client
+import { supabase } from "@/integrations/supabase/client";
+
+// Definir a interface para os dados do QR Code (deve ser a mesma usada em QRCodeList e EditQRDialog)
+interface QRCodeData {
+  id: string;
+  name: string;
+  target_url: string;
+  status: string;
+  scan_count: number;
+  created_at: string;
+  qr_url: string;
+  valid_until?: Date;
+}
 
 const Index = () => {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false); // Novo estado para o modal de edição
+  const [selectedQRCode, setSelectedQRCode] = useState<QRCodeData | null>(null); // Novo estado para o QR Code selecionado
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const handleQRCodeCreated = () => {
     setShowCreateDialog(false);
     setRefreshTrigger(prev => prev + 1);
+  };
+
+  const handleQRCodeUpdated = () => {
+    setShowEditDialog(false);
+    setRefreshTrigger(prev => prev + 1);
+  };
+
+  const handleEditQRCode = (qrCode: QRCodeData) => {
+    setSelectedQRCode(qrCode);
+    setShowEditDialog(true);
   };
 
   const handleLogout = async () => {
@@ -48,7 +73,7 @@ const Index = () => {
               <Plus className="w-4 h-4 mr-2" />
               Novo QR Code
             </Button>
-            <Button variant="ghost" size="sm" onClick={handleLogout}> {/* Botão de Logout */}
+            <Button variant="ghost" size="sm" onClick={handleLogout}>
               <LogOut className="w-4 h-4 mr-2" />
               Sair
             </Button>
@@ -143,7 +168,10 @@ const Index = () => {
             </Button>
           </div>
           
-          <QRCodeList refreshTrigger={refreshTrigger} />
+          <QRCodeList 
+            refreshTrigger={refreshTrigger} 
+            onEditQRCode={handleEditQRCode} // Passa a função para o QRCodeList
+          />
         </div>
       </section>
 
@@ -152,6 +180,15 @@ const Index = () => {
         onOpenChange={setShowCreateDialog} 
         onQRCodeCreated={handleQRCodeCreated} 
       />
+
+      {selectedQRCode && ( // Renderiza o modal de edição apenas se houver um QR Code selecionado
+        <EditQRDialog
+          open={showEditDialog}
+          onOpenChange={setShowEditDialog}
+          qrCodeData={selectedQRCode}
+          onQRCodeUpdated={handleQRCodeUpdated}
+        />
+      )}
     </div>
   );
 };
