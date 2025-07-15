@@ -5,6 +5,7 @@ import { SidebarNav } from "@/components/SidebarNav";
 import { AuthSecuritySettings } from "@/components/settings/AuthSecuritySettings";
 import { DomainRedirectSettings } from "@/components/settings/DomainRedirectSettings";
 import { LogConfiguration } from "@/components/settings/LogConfiguration";
+import { NotificationAlertSettings } from "@/components/settings/NotificationAlertSettings"; // Importar o novo componente
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -27,7 +28,7 @@ const settingsSections = [
   {
     title: "Notificações & Alertas",
     icon: Bell,
-    component: () => <div className="p-6 text-muted-foreground">Conteúdo para Notificações & Alertas</div>,
+    component: NotificationAlertSettings, // Usar o novo componente aqui
   },
   {
     title: "Integrações",
