@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Dynamic - Configurações</title>
+    <meta name="description" content="Configurações - QR Dynamic Sistema de QR Codes Dinâmicos">
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+    <div class="min-h-screen bg-background flex flex-col">
+        <!-- Header -->
+        <header class="border-b border-border bg-card/50 backdrop-blur-sm">
+            <div class="container mx-auto px-4 h-16 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center">
+                        <i data-lucide="qr-code" class="w-5 h-5 text-primary-foreground"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-foreground">QR Dynamic</h1>
+                        <p class="text-xs text-muted-foreground">Configurações do Sistema</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-3">
+                    <button onclick="window.location.href='index.html'" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
+                        Voltar para o Dashboard
+                    </button>
+                    <button onclick="handleLogout()" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
+                        Sair
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <div class="flex flex-1">
+            <!-- Sidebar de Navegação -->
+            <aside class="w-64 border-r border-border bg-card/50 p-4 sticky top-0 h-[calc(100vh-64px)] overflow-y-auto">
+                <nav class="flex flex-col space-y-1">
+                    <button onclick="showSection('auth')" class="sidebar-nav-btn active" data-section="auth">
+                        <i data-lucide="key" class="mr-2 h-4 w-4"></i>
+                        Autenticação & Segurança
+                    </button>
+                    <button onclick="showSection('domain')" class="sidebar-nav-btn" data-section="domain">
+                        <i data-lucide="globe" class="mr-2 h-4 w-4"></i>
+                        Domínio Base / Redirecionamento
+                    </button>
+                    <button onclick="showSection('logs')" class="sidebar-nav-btn" data-section="logs">
+                        <i data-lucide="file-text" class="mr-2 h-4 w-4"></i>
+                        Configuração de Logs
+                    </button>
+                    <button onclick="showSection('admin')" class="sidebar-nav-btn" data-section="admin">
+                        <i data-lucide="users" class="mr-2 h-4 w-4"></i>
+                        Administração do Sistema
+                    </button>
+                    <button onclick="showSection('notifications')" class="sidebar-nav-btn" data-section="notifications">
+                        <i data-lucide="bell" class="mr-2 h-4 w-4"></i>
+                        Notificações & Alertas
+                    </button>
+                    <button onclick="showSection('integrations')" class="sidebar-nav-btn" data-section="integrations">
+                        <i data-lucide="puzzle" class="mr-2 h-4 w-4"></i>
+                        Integrações
+                    </button>
+                    <button onclick="showSection('style')" class="sidebar-nav-btn" data-section="style">
+                        <i data-lucide="palette" class="mr-2 h-4 w-4"></i>
+                        Estilo dos QR Codes
+                    </button>
+                    <button onclick="showSection('expiration')" class="sidebar-nav-btn" data-section="expiration">
+                        <i data-lucide="clock" class="mr-2 h-4 w-4"></i>
+                        Expiração e Regras Globais
+                    </button>
+                    <button onclick="showSection('sandbox')" class="sidebar-nav-btn" data-section="sandbox">
+                        <i data-lucide="flask-conical" class="mr-2 h-4 w-4"></i>
+                        Modo de Teste / Sandbox
+                    </button>
+                    <button onclick="showSection('backup')" class="sidebar-nav-btn" data-section="backup">
+                        <i data-lucide="download" class="mr-2 h-4 w-4"></i>
+                        Backup e Exportação
+                    </button>
+                </nav>
+            </aside>
+
+            <!-- Conteúdo Principal das Configurações -->
+            <main class="flex-1 p-8 overflow-y-auto">
+                <div class="max-w-4xl mx-auto">
+                    <!-- Seção Autenticação & Segurança -->
+                    <div id="auth-section" class="settings-section active">
+                        <h2 class="text-3xl font-bold text-foreground mb-2">Autenticação & Segurança</h2>
+                        <p class="text-muted-foreground mb-8">Gerencie as configurações relacionadas a autenticação & segurança.</p>
+                        
+                        <div class="space-y-6">
+                            <div class="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
+                                <h3 class="text-lg font-semibold mb-4">Configurações de Senha</h3>
+                                <div class="space-y-4">
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" class="form-checkbox">
+                                        <span>Requer pelo menos 8 caracteres</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" class="form-checkbox">
+                                        <span>Requer caracteres especiais</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" class="form-checkbox">
+                                        <span>Requer números</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
+                                <h3 class="text-lg font-semibold mb-4">Autenticação de Dois Fatores</h3>
+                                <label class="flex items-center space-x-2">
+                                    <input type="checkbox" class="form-checkbox">
+                                    <span>Ativar 2FA para todos os usuários</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Outras seções -->
+                    <div id="domain-section" class="settings-section hidden">
+                        <h2 class="text-3xl font-bold text-foreground mb-2">Domínio Base / Redirecionamento</h2>
+                        <p class="text-muted-foreground mb-8">Configure o domínio base e regras de redirecionamento.</p>
+                        <div class="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
+                            <p class="text-muted-foreground">Conteúdo em desenvolvimento...</p>
+                        </div>
+                    </div>
+
+                    <div id="logs-section" class="settings-section hidden">
+                        <h2 class="text-3xl font-bold text-foreground mb-2">Configuração de Logs</h2>
+                        <p class="text-muted-foreground mb-8">Gerencie as configurações de logging do sistema.</p>
+                        <div class="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
+                            <p class="text-muted-foreground">Conteúdo em desenvolvimento...</p>
+                        </div>
+                    </div>
+
+                    <div id="admin-section" class="settings-section hidden">
+                        <h2 class="text-3xl font-bold text-foreground mb-2">Administração do Sistema</h2>
+                        <p class="text-muted-foreground mb-8">Gerencie usuários e permissões do sistema.</p>
+                        <div class="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
+                            <p class="text-muted-foreground">Conteúdo em desenvolvimento...</p>
+                        </div>
+                    </div>
+
+                    <div id="notifications-section" class="settings-section hidden">
+                        <h2 class="text-3xl font-bold text-foreground mb-2">Notificações & Alertas</h2>
+                        <p class="text-muted-foreground mb-8">Configure notificações e alertas do sistema.</p>
+                        <div class="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
+                            <p class="text-muted-foreground">Conteúdo em desenvolvimento...</p>
+                        </div>
+                    </div>
+
+                    <div id="integrations-section" class="settings-section hidden">
+                        <h2 class="text-3xl font-bold text-foreground mb-2">Integrações</h2>
+                        <p class="text-muted-foreground mb-8">Configure integrações com serviços externos.</p>
+                        <div class="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
+                            <p class="text-muted-foreground">Conteúdo em desenvolvimento...</p>
+                        </div>
+                    </div>
+
+                    <div id="style-section" class="settings-section hidden">
+                        <h2 class="text-3xl font-bold text-foreground mb-2">Estilo dos QR Codes</h2>
+                        <p class="text-muted-foreground mb-8">Personalize o visual dos QR Codes gerados.</p>
+                        <div class="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
+                            <p class="text-muted-foreground">Conteúdo em desenvolvimento...</p>
+                        </div>
+                    </div>
+
+                    <div id="expiration-section" class="settings-section hidden">
+                        <h2 class="text-3xl font-bold text-foreground mb-2">Expiração e Regras Globais</h2>
+                        <p class="text-muted-foreground mb-8">Configure regras globais de expiração.</p>
+                        <div class="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
+                            <p class="text-muted-foreground">Conteúdo em desenvolvimento...</p>
+                        </div>
+                    </div>
+
+                    <div id="sandbox-section" class="settings-section hidden">
+                        <h2 class="text-3xl font-bold text-foreground mb-2">Modo de Teste / Sandbox</h2>
+                        <p class="text-muted-foreground mb-8">Configure ambiente de testes.</p>
+                        <div class="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
+                            <p class="text-muted-foreground">Conteúdo em desenvolvimento...</p>
+                        </div>
+                    </div>
+
+                    <div id="backup-section" class="settings-section hidden">
+                        <h2 class="text-3xl font-bold text-foreground mb-2">Backup e Exportação</h2>
+                        <p class="text-muted-foreground mb-8">Configure backups automáticos e exportação de dados.</p>
+                        <div class="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
+                            <p class="text-muted-foreground">Conteúdo em desenvolvimento...</p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="settings.js"></script>
+</body>
+</html>
