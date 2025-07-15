@@ -2,9 +2,13 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { QrCode, Link, Tag, Zap } from "lucide-react";
+import { QrCode, Link, Tag, Zap, CalendarIcon } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 interface CreateQRDialogProps {
   open: boolean;
@@ -16,6 +20,7 @@ export function CreateQRDialog({ open, onOpenChange, onQRCodeCreated }: CreateQR
   const [formData, setFormData] = useState({
     name: "",
     target_url: "",
+    valid_until: undefined as Date | undefined, // Novo campo para a data de validade
   });
   const { toast } = useToast();
 
@@ -33,13 +38,14 @@ export function CreateQRDialog({ open, onOpenChange, onQRCodeCreated }: CreateQR
     }
 
     // Aqui integrará com Supabase
+    console.log("Dados do QR Code a serem criados:", formData);
     toast({
       title: "QR Code criado com sucesso!",
       description: "Funcionalidade será implementada com Supabase",
     });
 
     // Resetar form e fechar dialog
-    setFormData({ name: "", target_url: "" });
+    setFormData({ name: "", target_url: "", valid_until: undefined });
     onQRCodeCreated(); // Chama o callback para notificar que um QR Code foi criado
   };
 
@@ -90,6 +96,39 @@ export function CreateQRDialog({ open, onOpenChange, onQRCodeCreated }: CreateQR
             />
             <p className="text-xs text-muted-foreground">
               Esta URL pode ser alterada a qualquer momento sem precisar gerar um novo QR Code
+            </p>
+          </div>
+
+          {/* Novo campo: Válido até */}
+          <div className="space-y-2">
+            <Label htmlFor="valid_until" className="flex items-center gap-2">
+              <CalendarIcon className="w-4 h-4" />
+              Válido até (Opcional)
+            </Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant={"outline"}
+                  className={cn(
+                    "w-full justify-start text-left font-normal bg-background",
+                    !formData.valid_until && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {formData.valid_until ? format(formData.valid_until, "PPP") : <span>Selecione uma data</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0 bg-card border-border">
+                <Calendar
+                  mode="single"
+                  selected={formData.valid_until}
+                  onSelect={(date) => setFormData({ ...formData, valid_until: date })}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+            <p className="text-xs text-muted-foreground">
+              O QR Code será desativado automaticamente após esta data.
             </p>
           </div>
 
