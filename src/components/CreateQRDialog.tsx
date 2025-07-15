@@ -105,7 +105,7 @@ export function CreateQRDialog({ open, onOpenChange, onQrCodeCreated }: CreateQR
               type="url"
               placeholder="https://exemplo.com/destino"
               value={formData.target_url}
-              onChange={(e) => setFormData({ ...formData, target_url: e.target.value })} {/* Corrected to target_url */}
+              onChange={(e) => setFormData({ ...formData, target_url: e.target.value })}
               className="bg-background"
               disabled={isSubmitting}
             />
