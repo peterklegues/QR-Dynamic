@@ -64,20 +64,25 @@ const Index = () => {
               <Settings className="w-4 h-4 mr-2" />
               Configurações
             </Button>
-            <Button variant="ghost" size="sm" onClick={handleLogout}> {/* Botão Sair */}
+            <Button variant="ghost" size="sm" onClick={handleLogout}>
               <LogOut className="w-4 h-4 mr-2" />
               Sair
             </Button>
-            <Button 
-              onClick={() => setShowCreateDialog(true)}
-              className="bg-gradient-to-r from-primary to-primary-glow shadow-glow"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Novo QR Code
-            </Button>
+            {/* O botão "Novo QR Code" foi movido para fora do header */}
           </div>
         </div>
       </header>
+
+      {/* Botão "Novo QR Code" movido para abaixo do header */}
+      <div className="container mx-auto px-4 py-4 flex justify-end">
+        <Button 
+          onClick={() => setShowCreateDialog(true)}
+          className="bg-gradient-to-r from-primary to-primary-glow shadow-glow"
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          Novo QR Code
+        </Button>
+      </div>
 
       {/* Hero Section */}
       <section className="py-12 px-4 text-center">
