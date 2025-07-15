@@ -1,10 +1,10 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { QrCode, ExternalLink, Edit, Trash2, BarChart3, Copy, Eye, MoreHorizontal, PowerOff } from "lucide-react";
+import { QrCode, ExternalLink, Edit, Trash2, BarChart3, Copy, Eye, MoreHorizontal, PowerOff, Power } from "lucide-react"; // Importar Power icon
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
-import { useEffect, useState } from "react"; // Importar useState
+import { useEffect, useState } from "react";
 
 // Definir a interface para os dados do QR Code
 interface QRCodeData {
@@ -56,13 +56,12 @@ interface QRCodeListProps {
 }
 
 export function QRCodeList({ refreshTrigger, onEditQRCode }: QRCodeListProps) {
-  const [qrCodes, setQrCodes] = useState<QRCodeData[]>(initialMockQRCodes); // Usar estado para os QR Codes
+  const [qrCodes, setQrCodes] = useState<QRCodeData[]>(initialMockQRCodes);
   const { toast } = useToast();
 
   useEffect(() => {
     console.log("QRCodeList refreshed! Trigger value:", refreshTrigger);
     // Em um cenário real, aqui você buscaria os dados do Supabase
-    // Por enquanto, apenas redefinimos os mocks se o trigger for acionado
     // setQrCodes(initialMockQRCodes); // Descomente se quiser que o refreshTrigger resete os dados mock
   }, [refreshTrigger]);
 
@@ -83,6 +82,19 @@ export function QRCodeList({ refreshTrigger, onEditQRCode }: QRCodeListProps) {
     toast({
       title: "QR Code desativado!",
       description: `O QR Code com ID ${id} foi desativado.`,
+      variant: "default",
+    });
+  };
+
+  const handleActivate = (id: string) => { // Nova função para ativar
+    setQrCodes(prevQrCodes => 
+      prevQrCodes.map(qr => 
+        qr.id === id ? { ...qr, status: "Ativo" } : qr
+      )
+    );
+    toast({
+      title: "QR Code ativado!",
+      description: `O QR Code com ID ${id} foi ativado.`,
       variant: "default",
     });
   };
@@ -145,10 +157,15 @@ export function QRCodeList({ refreshTrigger, onEditQRCode }: QRCodeListProps) {
                         <Eye className="w-4 h-4 mr-2" />
                         Visualizar
                       </DropdownMenuItem>
-                      {qr.status === "Ativo" && ( // Mostrar "Desativar" apenas se estiver ativo
+                      {qr.status === "Ativo" ? (
                         <DropdownMenuItem onClick={() => handleDeactivate(qr.id)}>
                           <PowerOff className="w-4 h-4 mr-2" />
                           Desativar
+                        </DropdownMenuItem>
+                      ) : (
+                        <DropdownMenuItem onClick={() => handleActivate(qr.id)}> {/* Botão Ativar */}
+                          <Power className="w-4 h-4 mr-2" />
+                          Ativar
                         </DropdownMenuItem>
                       )}
                       <DropdownMenuItem 
