@@ -9,12 +9,12 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import { Switch } from "@/components/ui/switch"; // Importar o componente Switch
+import { Switch } from "@/components/ui/switch";
 
 interface CreateQRDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onQRCodeCreated: () => void; // Nova prop para callback
+  onQRCodeCreated: () => void;
 }
 
 export function CreateQRDialog({ open, onOpenChange, onQRCodeCreated }: CreateQRDialogProps) {
@@ -22,14 +22,13 @@ export function CreateQRDialog({ open, onOpenChange, onQRCodeCreated }: CreateQR
     name: "",
     target_url: "",
     valid_until: undefined as Date | undefined,
-    isActive: true, // Novo campo para o status ativo/inativo
+    isActive: true,
   });
   const { toast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validação básica
     if (!formData.name || !formData.target_url) {
       toast({
         title: "Erro de validação",
@@ -39,16 +38,14 @@ export function CreateQRDialog({ open, onOpenChange, onQRCodeCreated }: CreateQR
       return;
     }
 
-    // Aqui integrará com Supabase
     console.log("Dados do QR Code a serem criados:", formData);
     toast({
       title: "QR Code criado com sucesso!",
       description: "Funcionalidade será implementada com Supabase",
     });
 
-    // Resetar form e fechar dialog
     setFormData({ name: "", target_url: "", valid_until: undefined, isActive: true });
-    onQRCodeCreated(); // Chama o callback para notificar que um QR Code foi criado
+    onQRCodeCreated();
   };
 
   return (
@@ -68,7 +65,7 @@ export function CreateQRDialog({ open, onOpenChange, onQRCodeCreated }: CreateQR
           </div>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-4"> {/* Alterado de space-y-6 para space-y-4 */}
           <div className="space-y-2">
             <Label htmlFor="name" className="flex items-center gap-2">
               <Tag className="w-4 h-4" />
@@ -133,7 +130,6 @@ export function CreateQRDialog({ open, onOpenChange, onQRCodeCreated }: CreateQR
             </p>
           </div>
 
-          {/* Novo campo: Ativo/Inativo */}
           <div className="flex items-center justify-between space-x-2">
             <Label htmlFor="is-active" className="flex items-center gap-2">
               <Zap className="w-4 h-4" />
