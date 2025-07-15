@@ -5,6 +5,7 @@ import { SidebarNav } from "@/components/SidebarNav";
 import { AuthSecuritySettings } from "@/components/settings/AuthSecuritySettings";
 import { DomainRedirectSettings } from "@/components/settings/DomainRedirectSettings";
 import { LogConfiguration } from "@/components/settings/LogConfiguration";
+import { SystemAdministrationSettings } from "@/components/settings/SystemAdministrationSettings"; // Importar o novo componente
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -23,6 +24,11 @@ const settingsSections = [
     title: "Configuração de Logs",
     icon: FileText,
     component: LogConfiguration,
+  },
+  {
+    title: "Administração do Sistema", // Adicionar esta seção
+    icon: Users,
+    component: SystemAdministrationSettings,
   },
   {
     title: "Notificações & Alertas",
@@ -48,11 +54,6 @@ const settingsSections = [
     title: "Modo de Teste / Sandbox",
     icon: FlaskConical,
     component: () => <div className="p-6 text-muted-foreground">Conteúdo para Modo de Teste / Sandbox</div>,
-  },
-  {
-    title: "Administração do Sistema",
-    icon: Users,
-    component: () => <div className="p-6 text-muted-foreground">Conteúdo para Administração do Sistema</div>,
   },
   {
     title: "Backup e Exportação",
