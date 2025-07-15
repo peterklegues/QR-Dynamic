@@ -8,6 +8,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Plus, Search, MoreHorizontal, Edit, Trash2, Power, PowerOff, Mail } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { AddUserDialog } from "./AddUserDialog"; // Importar o novo modal
+import { EditUserDialog } from "./EditUserDialog"; // Importar o novo modal de edição
 
 interface UserData {
   id: string;
@@ -28,7 +29,9 @@ export function SystemAdministrationSettings() {
   const { toast } = useToast();
   const [users, setUsers] = useState<UserData[]>(mockUsers);
   const [searchTerm, setSearchTerm] = useState("");
-  const [showAddUserDialog, setShowAddUserDialog] = useState(false); // Estado para controlar o modal
+  const [showAddUserDialog, setShowAddUserDialog] = useState(false);
+  const [showEditUserDialog, setShowEditUserDialog] = useState(false); // Estado para controlar o modal de edição
+  const [selectedUser, setSelectedUser] = useState<UserData | null>(null); // Estado para o usuário selecionado para edição
 
   const filteredUsers = users.filter(user =>
     user.email.toLowerCase().includes(searchTerm.toLowerCase())
@@ -52,10 +55,16 @@ export function SystemAdministrationSettings() {
   };
 
   const handleEditUser = (user: UserData) => {
-    toast({
-      title: "Editar Usuário",
-      description: `Funcionalidade de edição para ${user.email} será implementada.`,
-    });
+    setSelectedUser(user);
+    setShowEditUserDialog(true);
+  };
+
+  const handleUserUpdated = (updatedUser: UserData) => {
+    setUsers(prevUsers =>
+      prevUsers.map(user => (user.id === updatedUser.id ? updatedUser : user))
+    );
+    setShowEditUserDialog(false);
+    setSelectedUser(null); // Limpar o usuário selecionado
   };
 
   const handleToggleStatus = (id: string, currentStatus: string) => {
@@ -223,6 +232,15 @@ export function SystemAdministrationSettings() {
         onOpenChange={setShowAddUserDialog}
         onUserAdded={handleUserAdded}
       />
+
+      {selectedUser && (
+        <EditUserDialog
+          open={showEditUserDialog}
+          onOpenChange={setShowEditUserDialog}
+          userData={selectedUser}
+          onUserUpdated={handleUserUpdated}
+        />
+      )}
     </div>
   );
 }
