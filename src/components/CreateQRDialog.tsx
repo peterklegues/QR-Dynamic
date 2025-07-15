@@ -53,7 +53,7 @@ export function CreateQRDialog({ open, onOpenChange, onQRCodeCreated }: CreateQR
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[400px] bg-card border-border"> {/* Largura ajustada aqui */}
+      <DialogContent className="sm:max-w-[500px] bg-card border-border">
         <DialogHeader>
           <div className="flex items-center gap-3 mb-2">
             <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center">
